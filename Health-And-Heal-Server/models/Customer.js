@@ -40,10 +40,6 @@ const customerSchema = new mongoose.Schema({
     enum: ['active', 'inactive'],
     default: 'active'
   },
-  creditLimit: {
-    type: Number,
-    default: 0
-  },
   outstandingBalance: {
     type: Number,
     default: 0

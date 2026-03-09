@@ -78,7 +78,7 @@ const billSchema = new mongoose.Schema({
   },
   taxPercent: {
     type: Number,
-    default: 0,
+    default: 18,
     min: 0,
     max: 100
   },

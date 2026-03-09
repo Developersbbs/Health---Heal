@@ -30,7 +30,6 @@ const ManageCustomers = () => {
     gstNumber: '',
     customerType: 'individual',
     status: 'active',
-    creditLimit: 0,
     notes: ''
   });
 
@@ -127,7 +126,6 @@ const ManageCustomers = () => {
       gstNumber: '',
       customerType: 'individual',
       status: 'active',
-      creditLimit: 0,
       notes: ''
     });
     setSelectedCustomer(null);
@@ -155,7 +153,6 @@ const ManageCustomers = () => {
       gstNumber: customer.gstNumber || '',
       customerType: customer.customerType || 'individual',
       status: customer.status,
-      creditLimit: customer.creditLimit || 0,
       notes: customer.notes || ''
     });
     setSelectedCustomer(customer);
@@ -324,9 +321,6 @@ const ManageCustomers = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
-                  Credit Limit
-                </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                   Actions
                 </th>
@@ -358,16 +352,11 @@ const ManageCustomers = () => {
                     </td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${customer.status === 'active'
-                          ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300'
-                          : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300'
+                        ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300'
+                        : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300'
                         }`}>
                         {customer.status.charAt(0).toUpperCase() + customer.status.slice(1)}
                       </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900 dark:text-slate-100">
-                        ₹{customer.creditLimit?.toLocaleString() || '0'}
-                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex items-center justify-end space-x-2">
@@ -443,10 +432,6 @@ const ManageCustomers = () => {
                     <p className="mt-1 text-sm text-gray-900 dark:text-slate-100 capitalize">{selectedCustomer?.status}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Credit Limit</label>
-                    <p className="mt-1 text-sm text-gray-900 dark:text-slate-100">₹{selectedCustomer?.creditLimit?.toLocaleString() || '0'}</p>
-                  </div>
-                  <div>
                     <label className="block text-sm font-medium text-gray-700">Outstanding Balance</label>
                     <p className={`mt-1 text-sm ${selectedCustomer?.outstandingBalance > 0 ? 'text-red-600' : 'text-green-600'}`}>
                       ₹{selectedCustomer?.outstandingBalance?.toLocaleString() || '0'}
@@ -520,10 +505,10 @@ const ManageCustomers = () => {
                                   <td className="px-4 py-3 text-sm text-gray-900 dark:text-slate-100 whitespace-nowrap">₹{bill.totalAmount?.toLocaleString() || "0"}</td>
                                   <td className="px-4 py-3 text-sm whitespace-nowrap">
                                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${bill.paymentStatus === "paid"
-                                        ? "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300"
-                                        : bill.paymentStatus === "partial"
-                                          ? "bg-yellow-100 text-yellow-800"
-                                          : "bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300"
+                                      ? "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300"
+                                      : bill.paymentStatus === "partial"
+                                        ? "bg-yellow-100 text-yellow-800"
+                                        : "bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300"
                                       }`}>
                                       {bill.paymentStatus?.charAt(0).toUpperCase() + (bill.paymentStatus?.slice(1) || "")}
                                     </span>
@@ -639,21 +624,6 @@ const ManageCustomers = () => {
                       <option value="active">Active</option>
                       <option value="inactive">Inactive</option>
                     </select>
-                  </div>
-                  <div>
-                    <label htmlFor="creditLimit" className="block text-sm font-medium text-gray-700">
-                      Credit Limit
-                    </label>
-                    <input
-                      type="number"
-                      id="creditLimit"
-                      name="creditLimit"
-                      value={formData.creditLimit}
-                      onChange={(e) => setFormData({ ...formData, creditLimit: Number(e.target.value) })}
-                      min="0"
-                      disabled={modalMode === 'view'}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-amber-700 focus:border-blue-500 disabled:bg-gray-100"
-                    />
                   </div>
                   <div>
                     <label htmlFor="gstNumber" className="block text-sm font-medium text-gray-700">

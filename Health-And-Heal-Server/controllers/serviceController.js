@@ -80,10 +80,10 @@ const createService = async (req, res) => {
     const { name, description, price, duration, category } = req.body;
 
     // Validation
-    if (!name || !description || !price) {
+    if (!name || !price) {
       return res.status(400).json({
         success: false,
-        message: 'Name, description, and price are required'
+        message: 'Name and price are required'
       });
     }
 
@@ -127,7 +127,7 @@ const updateService = async (req, res) => {
 
     // Update fields
     service.name = name || service.name;
-    service.description = description || service.description;
+    service.description = description !== undefined ? description : service.description;
     service.price = price || service.price;
     service.duration = duration || service.duration;
     service.category = category || service.category;

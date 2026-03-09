@@ -8,7 +8,6 @@ const serviceSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: true,
     trim: true
   },
   price: {
@@ -39,7 +38,7 @@ const serviceSchema = new mongoose.Schema({
 });
 
 // Update the updatedAt field before saving
-serviceSchema.pre('save', function(next) {
+serviceSchema.pre('save', function (next) {
   this.updatedAt = Date.now();
   next();
 });

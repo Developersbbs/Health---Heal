@@ -863,7 +863,7 @@ const ManageBills = () => {
       subtotal: 0,
       discountPercent: 0,
       discountAmount: 0,
-      taxPercent: 0,
+      taxPercent: 18,
       taxAmount: 0,
       totalAmount: 0,
       paymentStatus: 'pending',
@@ -1404,7 +1404,9 @@ const ManageBills = () => {
                         </div>
                       </div>
                       <div className="flex justify-between items-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-2">
-                        <span className="text-gray-600 dark:text-gray-400 font-medium">Discount (%):</span>
+                        <span className="text-gray-600 dark:text-gray-400 font-medium">
+                          Discount (%){appliedCouponData?.discountType === 'percentage' ? ` (${appliedCouponData.discountValue}% applied)` : ''}:
+                        </span>
                         <div className="relative w-24">
                           <input type="number" value={formData.discountPercent} onChange={(e) => setFormData({ ...formData, discountPercent: Number(e.target.value) })} min="0" max="100" step="0.01" className="w-full pl-2 pr-6 py-1 border-none focus:ring-0 text-right bg-transparent text-gray-900 dark:text-white font-medium" />
                           <span className="absolute right-2 top-1.5 text-gray-400 text-xs">%</span>
@@ -1466,7 +1468,16 @@ const ManageBills = () => {
                       <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-3 rounded-xl relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
                         <div className="flex justify-between items-center mb-2 pl-2">
-                          <span className="text-gray-600 dark:text-gray-400 font-medium text-sm">Customer Paid:</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-gray-600 dark:text-gray-400 font-medium text-sm">Customer Paid:</span>
+                            <button
+                              type="button"
+                              onClick={() => setFormData(prev => ({ ...prev, paidAmount: Math.round(prev.totalAmount) }))}
+                              className="text-[10px] bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-1.5 py-0.5 rounded border border-green-200 dark:border-green-800 hover:bg-green-200 dark:hover:bg-green-800/50 transition-colors uppercase font-bold"
+                            >
+                              Full Amount
+                            </button>
+                          </div>
                           <div className="relative w-36">
                             <span className="absolute left-3 top-1.5 text-gray-500 font-medium text-sm">₹</span>
                             <input type="number" value={formData.paidAmount} onChange={(e) => setFormData({ ...formData, paidAmount: e.target.value === '' ? '' : Number(e.target.value) })} min="0" step="0.01" placeholder="e.g. 1000" className="w-full pl-7 pr-3 py-1.5 border border-green-300 dark:border-green-700 rounded-lg text-right bg-green-50 dark:bg-gray-900 text-green-900 dark:text-green-400 font-bold focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm" />
@@ -1474,7 +1485,7 @@ const ManageBills = () => {
                         </div>
                         <div className="flex justify-between items-center pl-2">
                           <span className="text-gray-600 dark:text-gray-400 font-medium text-sm">Balance Due:</span>
-                          <span className={`font-bold text-lg ${formData.dueAmount > 0 ? 'text-red-500' : 'text-gray-400'}`}>₹{formData.dueAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                          <span className={`font-bold text-lg ${formData.dueAmount > 0 ? 'text-red-500' : 'text-gray-400'}`}>₹{Math.round(formData.dueAmount).toLocaleString()}</span>
                         </div>
                       </div>
                     </div>
