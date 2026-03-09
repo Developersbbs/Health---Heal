@@ -15,8 +15,7 @@ const Services = () => {
   const [stats, setStats] = useState({
     totalServices: 0,
     totalRevenue: 0,
-    avgPrice: 0,
-    popularCategory: ''
+    categoryCount: 0
   });
 
   // Form states
@@ -41,24 +40,19 @@ const Services = () => {
   const [categoryFilter, setCategoryFilter] = useState("");
 
   // Calculate service statistics
-  const calculateStats = (services) => {
+  const calculateStats = (services, categoryList = []) => {
     const totalServices = services.length;
     const totalRevenue = services.reduce((sum, service) => sum + (parseFloat(service.price) || 0), 0);
-    const avgPrice = totalServices > 0 ? (totalRevenue / totalServices).toFixed(2) : 0;
 
-    // Find most popular category
-    const categoryCounts = services.reduce((acc, service) => {
-      acc[service.category] = (acc[service.category] || 0) + 1;
-      return acc;
-    }, {});
-
-    const popularCategory = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
+    // Use categorized list if available, otherwise fallback to unique categories from services
+    const categoryCount = categoryList.length > 0
+      ? categoryList.length
+      : [...new Set(services.map(s => s.category).filter(Boolean))].length;
 
     setStats({
       totalServices,
       totalRevenue,
-      avgPrice,
-      popularCategory: popularCategory || 'N/A'
+      categoryCount
     });
   };
 
@@ -68,7 +62,12 @@ const Services = () => {
       const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/categories`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setCategories(response.data.categories || []);
+      const categoryList = response.data.categories || [];
+      setCategories(categoryList);
+      // Update stats with fresh category count if services already loaded
+      if (services.length > 0) {
+        calculateStats(services, categoryList);
+      }
     } catch (error) {
       console.error('Error fetching categories:', error);
     }
@@ -83,7 +82,7 @@ const Services = () => {
       });
       const servicesData = response.data.services || [];
       setServices(servicesData);
-      calculateStats(servicesData);
+      calculateStats(servicesData, categories);
     } catch (error) {
       console.error('Error fetching services:', error);
       toast.error('Failed to fetch services');
@@ -245,7 +244,7 @@ const Services = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Total Services Card */}
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border-l-4 border-blue-500">
             <div className="flex items-center justify-between">
@@ -274,27 +273,13 @@ const Services = () => {
             </div>
           </div>
 
-          {/* Average Price Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border-l-4 border-amber-500">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Avg. Service Price</p>
-                <p className="text-2xl font-semibold text-gray-900 dark:text-white">₹{stats.avgPrice}</p>
-                <p className="text-xs text-gray-500 mt-1">Per service</p>
-              </div>
-              <div className="p-3 rounded-full bg-amber-100 dark:bg-amber-900/30">
-                <FiTrendingUp className="w-6 h-6 text-amber-600 dark:text-amber-400" />
-              </div>
-            </div>
-          </div>
-
-          {/* Popular Category Card */}
+          {/* Category Count Card */}
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border-l-4 border-purple-500">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Popular Category</p>
-                <p className="text-2xl font-semibold text-gray-900 dark:text-white capitalize">{stats.popularCategory}</p>
-                <p className="text-xs text-gray-500 mt-1">Most booked</p>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Categories</p>
+                <p className="text-2xl font-semibold text-gray-900 dark:text-white">{stats.categoryCount}</p>
+                <p className="text-xs text-gray-500 mt-1">Available categories</p>
               </div>
               <div className="p-3 rounded-full bg-purple-100 dark:bg-purple-900/30">
                 <FiCalendar className="w-6 h-6 text-purple-600 dark:text-purple-400" />
